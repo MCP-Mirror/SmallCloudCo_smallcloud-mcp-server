@@ -1,5 +1,5 @@
 {
-  "name": "mock-mcp-server",
+  "name": "smallcloud-mcp-server",
   "version": "0.1.0",
   "description": "Mock MCP Server for testing",
   "type": "module",

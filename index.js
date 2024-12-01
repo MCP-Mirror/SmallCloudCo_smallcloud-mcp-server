@@ -64,7 +64,7 @@ const TOOL_HANDLERS = {
 
 // Create server
 const server = new Server(
-  { name: "myApp", version: "1.0.0" },
+  { name: "myApp", version: "0.1.0" },
   { capabilities: { tools: {} } }
 );
 
