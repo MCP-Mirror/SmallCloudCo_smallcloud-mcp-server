@@ -9,28 +9,65 @@ function log(...args) {
   process.stderr.write(msg);
 }
 
-// Define the get_hello tool
+// Define the get_hello tool with input schema
 const GET_HELLO_TOOL = {
   name: "get_hello",
-  description: "A simple hello world tool for demonstration",
+  description: "A hello world tool that greets with a customizable message",
   inputSchema: {
     type: "object",
-    properties: {}
+    properties: {
+      name: {
+        type: "string",
+        description: "Name to include in the greeting"
+      },
+      language: {
+        type: "string",
+        description: "Language for the greeting",
+        enum: ["en", "es", "fr"]
+      }
+    },
+    required: ["name"]
   }
 };
+
+//an example of the get_hello tool with no input required:
+// const GET_HELLO_TOOL = {
+//   name: "get_hello",
+//   description: "A simple hello world tool for demonstration",
+//   inputSchema: {
+//     type: "object",
+//     properties: {}
+//   }
+// };
 
 // All tools array (currently just get_hello)
 const ALL_TOOLS = [GET_HELLO_TOOL];
 
 // Tool handlers
 const TOOL_HANDLERS = {
-  get_hello: async () => {
+  get_hello: async (request) => {
+    // Log full request details for debugging
+    log("get_hello TOOL_HANDLER called with full request:", JSON.stringify(request, null, 2));
+    
+    // Extract input parameters
+    const { name = "World", language = "en" } = request.params.input || {};
+    
+    // Create greeting based on language
+    const greetings = {
+      "en": `Hello, ${name}!`,
+      "es": `¡Hola, ${name}!`,
+      "fr": `Bonjour, ${name}!`
+    };
+    
+    const greeting = greetings[language] || greetings["en"];
+    
     return {
       toolResult: {
         content: [
           {
             type: "text",
-            text: "Hello, World!"
+            //text: "Hello, World!" //use instead, for basic response with no logic or input
+            text: greeting
           }
         ]
       }
@@ -53,6 +90,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
 server.setRequestHandler(CallToolRequestSchema, async (request) => {
   const toolName = request.params.name;
   log(`Received tool call: ${toolName}`);
+  log(`Full request details: ${JSON.stringify(request, null, 2)}`);
   
   try {
     if (toolName in TOOL_HANDLERS) {
