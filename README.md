@@ -8,13 +8,6 @@ This is a demo for Mac OS. Windows may require some small adjustments. I would c
 
 Visit https://smallcloud.co for more AI/LLM/Coding resources. 
 
-## Features
-
-- Dynamic tool registration and handling
-- Stdio-based server transport
-- Error logging and handling
-- Simple extensibility
-
 ## Prerequisites
 
 - Node.js (version 18 or later recommended) #installed by homebrow in this example
