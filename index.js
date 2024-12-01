@@ -8,8 +8,6 @@ function log(...args) {
   const msg = `[DEBUG ${(new Date()).toISOString()}] ${args.join(" ")}\n`;
   process.stderr.write(msg);
 }
-
-// Define the get_hello tool with input schema
 const GET_HELLO_TOOL = {
   name: "get_hello",
   description: "A hello world tool that greets with a customizable message",
@@ -26,19 +24,9 @@ const GET_HELLO_TOOL = {
         enum: ["en", "es", "fr"]
       }
     },
-    required: ["name"]
+    required: ["name", "language"]
   }
 };
-
-//an example of the get_hello tool with no input required:
-// const GET_HELLO_TOOL = {
-//   name: "get_hello",
-//   description: "A simple hello world tool for demonstration",
-//   inputSchema: {
-//     type: "object",
-//     properties: {}
-//   }
-// };
 
 // All tools array (currently just get_hello)
 const ALL_TOOLS = [GET_HELLO_TOOL];
@@ -50,7 +38,7 @@ const TOOL_HANDLERS = {
     log("get_hello TOOL_HANDLER called with full request:", JSON.stringify(request, null, 2));
     
     // Extract input parameters
-    const { name = "World", language = "en" } = request.params.input || {};
+    const { name = "World", language = "en" } = request.params.arguments || {};
     
     // Create greeting based on language
     const greetings = {
@@ -59,14 +47,13 @@ const TOOL_HANDLERS = {
       "fr": `Bonjour, ${name}!`
     };
     
-    const greeting = greetings[language] || greetings["en"];
-    
+    const greeting = greetings[language];
+
     return {
       toolResult: {
         content: [
           {
             type: "text",
-            //text: "Hello, World!" //use instead, for basic response with no logic or input
             text: greeting
           }
         ]
